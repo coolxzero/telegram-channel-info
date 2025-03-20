@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Channel Info</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-group button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .form-group button:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin-top: 20px;
+        }
+        .result h2 {
+            color: #333;
+        }
+        .result img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        .result p {
+            margin: 5px 0;
+        }
+        .result .stats, .result .activity {
+            margin-top: 20px;
+        }
+        .result .stats h3, .result .activity h3 {
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Telegram Channel Info</h1>
+        <form method="GET" action="">
+            <div class="form-group">
+                <label for="username">Enter Telegram Channel Username:</label>
+                <input type="text" id="username" name="username" placeholder="e.g., @channelname" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">Get Info</button>
+            </div>
+        </form>
+
+        <div class="result">
+            <?php
+            if (isset($_GET['username'])) {
+                $channelInfo = json_decode(getChannelInfo($_GET['username']), true);
+                if (isset($channelInfo['error'])) {
+                    echo "<p style='color: red;'>{$channelInfo['error']}</p>";
+                } else {
+                    echo "<h2>{$channelInfo['channel_info']['title']}</h2>";
+                    echo "<img src='{$channelInfo['channel_info']['profile_picture']}' alt='Profile Picture'>";
+                    echo "<p><strong>Username:</strong> {$channelInfo['channel_info']['username']}</p>";
+                    echo "<p><strong>Bio:</strong> {$channelInfo['channel_info']['bio']}</p>";
+                    echo "<p><strong>Category:</strong> {$channelInfo['channel_info']['category']}</p>";
+                    echo "<p><strong>Channel Age:</strong> {$channelInfo['channel_info']['channel_age']}</p>";
+                    echo "<p><strong>Channel Link:</strong> <a href='{$channelInfo['channel_info']['channel_link']}' target='_blank'>{$channelInfo['channel_info']['channel_link']}</a></p>";
+
+                    echo "<div class='stats'>";
+                    echo "<h3>Stats</h3>";
+                    echo "<p><strong>Total Members:</strong> {$channelInfo['stats']['total_members']}</p>";
+                    echo "<p><strong>Average Views per Post:</strong> {$channelInfo['stats']['average_views']}</p>";
+                    echo "<p><strong>Active Members:</strong> {$channelInfo['stats']['active_members']}</p>";
+                    echo "</div>";
+
+                    echo "<div class='activity'>";
+                    echo "<h3>Activity</h3>";
+                    echo "<p><strong>Last Post Date:</strong> {$channelInfo['activity']['last_post_date']}</p>";
+                    echo "<p><strong>Best Time to Post:</strong> {$channelInfo['activity']['best_time_to_post']}</p>";
+                    echo "<h4>Last 5 Posts:</h4>";
+                    echo "<ul>";
+                    foreach ($channelInfo['activity']['last_5_posts'] as $post) {
+                        echo "<li><strong>Date:</strong> {$post['date']}, <strong>Views:</strong> {$post['views']}, <strong>Link:</strong> <a href='{$post['link']}' target='_blank'>View Post</a></li>";
+                    }
+                    echo "</ul>";
+                    echo "</div>";
+                }
+            }
+            ?>
+        </div>
+    </div>
+</body>
+</html>
